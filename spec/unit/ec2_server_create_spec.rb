@@ -672,6 +672,13 @@ describe Chef::Knife::Ec2ServerCreate do
     before do
       Fog::Compute::AWS.stub(:new).and_return(@ec2_connection)
     end
+    
+    it "sets the spot price" do
+      @knife_ec2_create.config[:spot_price] = '1.99'
+      server_def = @knife_ec2_create.create_server_def
+
+      server_def[:price].should == '1.99'
+    end
 
     it "sets the specified placement_group" do
       @knife_ec2_create.config[:placement_group] = ['some_placement_group']
@@ -888,6 +895,7 @@ describe Chef::Knife::Ec2ServerCreate do
       Net::SSH::Config.stub(:for).and_return(:user => "darius")
       @knife_ec2_create.get_ssh_gateway_for(hostname).should be_nil
     end
+
   end
 
   describe "ssh_connect_host" do
